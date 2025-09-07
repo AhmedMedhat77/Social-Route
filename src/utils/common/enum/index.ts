@@ -3,9 +3,14 @@ export enum GENDER_ENUM {
   FEMALE = "female",
 }
 
-export enum PLATFORM_ENUM {
+export enum AGENT_ENUM {
   local = "local",
   google = "google",
   facebook = "facebook",
   apple = "apple",
+}
+
+export enum ROLE_ENUM {
+  USER = "user",
+  ADMIN = "admin",
 }
