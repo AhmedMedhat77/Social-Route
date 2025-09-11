@@ -1,10 +1,13 @@
 import express, { Express } from "express";
-import config from "./config/config";
+import config from "./config";
 import cors from "cors";
-import { connectDB } from "./DB/connect";
-import { globalErrorHandler } from "./utils/error/GlobalError";
+
+import { connectDB } from "./DB";
+
 // Routes
-import authRoutes from "./modules/Auth/auth.controller";
+import { AuthRouter } from "./modules";
+// Utils
+import { globalErrorHandler } from "./utils";
 
 const bootstrap = async (app: Express) => {
   connectDB();
@@ -14,7 +17,7 @@ const bootstrap = async (app: Express) => {
   app.use(cors());
 
   // Routes
-  app.use("/auth", authRoutes);
+  app.use("/auth", AuthRouter);
 
   // Dummy Route for not found routes
   app.use("/{*dummy}", (req, res) => {

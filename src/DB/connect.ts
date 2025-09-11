@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import config from "../config/config";
+import config from "../config";
 import AppError, { ErrorCodes } from "../utils/error/AppError";
 
 export const connectDB = async () => {

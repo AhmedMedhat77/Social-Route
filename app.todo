@@ -8,3 +8,6 @@
 - [x] user type 
 - [x] repository design pattern 
 - [x] factory design pattern  
+- [] Auth middleware
+- [] validation using zod 
+- [] global error handler 

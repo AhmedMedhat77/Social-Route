@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import AppError from "./AppError";
 
 export const globalErrorHandler = async (
-  err: any,
+  err: Error & { statusCode?: number },
   req: Request,
   res: Response,
   next: NextFunction
@@ -22,10 +22,10 @@ export const globalErrorHandler = async (
       return res.status(err.statusCode).json({
         success: false,
         message: err.message,
+        errorDetails: err.errorDetails,
         stack: err.stack,
       });
     }
-
 
     // Handle other errors
     res.status(err.statusCode || 500).json({

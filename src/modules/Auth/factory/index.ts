@@ -1,7 +1,7 @@
 import { AGENT_ENUM, ROLE_ENUM } from "../../../utils/common/enum";
 import { hashPassword, hashPhoneNumber } from "../../../utils/hash";
 import { generateOTP } from "../../../utils/OTP";
-import { LoginDTO, RegisterDTO, VerifyOTPDTO } from "../auth.dto";
+import { LoginDTO, RegisterDTO, RegisterWithGoogleDTO, VerifyOTPDTO } from "../auth.dto";
 import { User } from "../entity";
 
 export class AuthFactoryService {
@@ -10,10 +10,8 @@ export class AuthFactoryService {
     const userEntity = new User();
 
     userEntity.fullName = registerDTO.fullName;
-
     userEntity.firstName = registerDTO.fullName.split(" ")[0];
     userEntity.lastName = registerDTO.fullName.split(" ")[1];
-
     userEntity.avatar = registerDTO.avatar;
     userEntity.email = registerDTO.email!;
     userEntity.phone = await hashPhoneNumber(registerDTO.phone!);
@@ -45,6 +43,25 @@ export class LoginFactoryService {
     const userEntity = new User();
     userEntity.email = loginDTO.email;
     userEntity.password = loginDTO.password;
+    return userEntity;
+  };
+}
+
+export class GoogleAuthFactoryService {
+  registerWithGoogle = async (googleData: RegisterWithGoogleDTO) => {
+    const userEntity = new User();
+
+    // Set Google-specific data
+    userEntity.googleId = googleData.googleId;
+    userEntity.userAgent = AGENT_ENUM.google;
+    userEntity.role = ROLE_ENUM.USER;
+    userEntity.isVerified = true; // Google users are pre-verified
+    userEntity.fullName = googleData.name;
+    userEntity.avatar = googleData.picture;
+    userEntity.email = googleData.email!;
+    // Optional: Set default values for Google users
+    userEntity.otpAttempts = 0;
+
     return userEntity;
   };
 }

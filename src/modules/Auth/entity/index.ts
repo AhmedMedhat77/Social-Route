@@ -24,4 +24,6 @@ export class User {
   public otp!: string;
   public otpExpiresAt!: Date;
   public otpAttempts!: number;
+
+  public googleId!: string;
 }

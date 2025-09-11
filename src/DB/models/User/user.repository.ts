@@ -1,4 +1,5 @@
-import config from "../../../config/config";
+import config from "../../../config";
+import { RegisterWithGoogleDTO } from "../../../modules/Auth";
 import { IUser } from "../../../utils/common/interfaces/User";
 import { sendEmail } from "../../../utils/email";
 import { ConflictException, NotFoundException } from "../../../utils/error/AppError";
@@ -6,6 +7,7 @@ import { comparePassword } from "../../../utils/hash";
 import { generateToken } from "../../../utils/jwt";
 import { AbstractRepository } from "../../abstract.repository";
 import User from "./user.model";
+import { OAuth2Client } from "google-auth-library";
 
 export class UserRepository extends AbstractRepository<IUser> {
   constructor() {
@@ -97,5 +99,16 @@ export class UserRepository extends AbstractRepository<IUser> {
     );
 
     return { userExists, token, refreshToken };
+  }
+
+  async registerWithGoogle(user: Partial<IUser>) {
+    const userExists = await this.isExists({ email: user.email });
+    if (userExists) {
+      throw new ConflictException("User already exists");
+    }
+
+    const userData = await this.create(user);
+    userData.save();
+    return userData;
   }
 }

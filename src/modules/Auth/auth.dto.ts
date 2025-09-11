@@ -10,7 +10,6 @@ export interface RegisterDTO {
   gender: GENDER_ENUM;
   avatar?: string;
   dob: Date;
-
   firstName?: string;
   lastName?: string;
 }
@@ -25,4 +24,11 @@ export interface VerifyOTPDTO {
 export interface LoginDTO {
   email: string;
   password: string;
+}
+
+export interface RegisterWithGoogleDTO {
+  googleId: string;
+  name?: string;
+  email?: string;
+  picture?: string;
 }

@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import config from "../../config/config";
+import config from "../../config";
 import AppError from "../error/AppError";
 
 const transporter = nodemailer.createTransport({
