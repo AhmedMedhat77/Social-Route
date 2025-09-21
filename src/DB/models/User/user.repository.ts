@@ -1,5 +1,4 @@
 import config from "../../../config";
-import { RegisterWithGoogleDTO } from "../../../modules/Auth";
 import { IUser } from "../../../utils/common/interfaces/User";
 import { sendEmail } from "../../../utils/email";
 import { ConflictException, NotFoundException } from "../../../utils/error/AppError";

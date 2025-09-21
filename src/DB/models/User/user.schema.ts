@@ -71,6 +71,7 @@ export const userSchema = new Schema<IUser>(
       type: Number,
       default: 0,
     },
+
     role: {
       type: String,
       enum: ROLE_ENUM,

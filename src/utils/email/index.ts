@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import config from "../../config";
 import AppError from "../error/AppError";
+import { MailOptions } from "nodemailer/lib/json-transport";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -12,21 +13,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-interface SendEmailProps {
-  from?: string;
-  to: string;
-  subject: string;
-  text: string;
-}
-export const sendEmail = async ({ from, to, subject, text }: SendEmailProps) => {
+export const sendEmail = async (mailOptions: MailOptions) => {
   try {
-    const mailOptions = {
-      from: from || `'Ecommerce App' ${config.emailUser}`,
-      to,
-      subject,
-      text,
+    const OPTIONS: MailOptions = {
+      from: mailOptions.from || `'Ecommerce App' ${config.emailUser}`,
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      text: mailOptions.text,
+      ...mailOptions,
     };
-    await transporter.sendMail(mailOptions);
+    await transporter.sendMail(OPTIONS);
   } catch (error) {
     if (error instanceof Error) {
       throw new AppError(error.message, 500);

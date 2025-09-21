@@ -34,6 +34,7 @@ export class VerifyOTPFactoryService {
     const userEntity = new User();
     userEntity.email = verifyOTPDTO.email;
     userEntity.otp = verifyOTPDTO.otp;
+
     return userEntity;
   };
 }
