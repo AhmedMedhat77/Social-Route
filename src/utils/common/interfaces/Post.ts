@@ -4,7 +4,7 @@ import { REACTION_ENUM } from "../enum";
 // Post Reactions
 export interface IReaction {
   reaction: REACTION_ENUM;
-  user: ObjectId;
+  userId: ObjectId;
 }
 
 export interface IAttachment {
@@ -20,5 +20,5 @@ export interface IPost extends Document {
   content: string;
   attachments: IAttachment[];
   // Post Reactions
-  reactions: REACTION_ENUM[];
+  reactions: IReaction[];
 }

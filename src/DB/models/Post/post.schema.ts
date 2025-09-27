@@ -27,7 +27,7 @@ const reactionSchema = new Schema<IReaction>(
       enum: REACTION_ENUM,
       required: true,
     },
-    user: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,

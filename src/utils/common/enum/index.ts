@@ -16,6 +16,7 @@ export enum ROLE_ENUM {
 }
 
 export enum REACTION_ENUM {
+  NONE = "",
   LIKE = "1",
   DISLIKE = "2",
   LOVE = "3",

@@ -11,3 +11,8 @@ export const postValidation = createValidationSchema({
 }, {
   message: "Either content or attachments is required",
 });
+
+export const postReactionValidation = createValidationSchema({
+  id: z.string(),
+  reaction: z.enum(REACTION_ENUM),
+});
