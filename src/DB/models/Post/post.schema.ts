@@ -1,5 +1,6 @@
 import { Schema } from "mongoose";
-import { IAttachment, IPost, IReaction, REACTION_ENUM } from "../../../utils";
+import { IAttachment, IPost } from "../../../utils";
+import { reactionSchema } from "../common";
 
 const attachmentSchema = new Schema<IAttachment>(
   {
@@ -9,27 +10,6 @@ const attachmentSchema = new Schema<IAttachment>(
     },
     url: {
       type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-    id: false,
-  }
-);
-
-const reactionSchema = new Schema<IReaction>(
-  {
-    reaction: {
-      type: String,
-      enum: REACTION_ENUM,
-      required: true,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
       required: true,
     },
   },
