@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { GENDER_ENUM, AGENT_ENUM, ROLE_ENUM } from "../enum";
 
 export interface IUser extends Document {
@@ -26,4 +27,9 @@ export interface IUser extends Document {
   otp?: string;
   otpExpiresAt?: Date;
   otpAttempts: number;
+}
+
+// REOPEN IUSER Concept
+export interface IUser {
+  _id: ObjectId;
 }
