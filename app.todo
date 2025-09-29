@@ -8,6 +8,12 @@
 - [x] user type 
 - [x] repository design pattern 
 - [x] factory design pattern  
-- [] Auth middleware
+- [x] Auth middleware
 - [x] validation using zod 
 - [x] global error handler 
+- [x] common model for reactions 
+- [x] comment model 
+- [x] merge params 
+- [x] add comment - get comments - get comment and it's replies  - delete comment and it's replies 
+- [x] delete post and it's comments 
+- [x] add reactions

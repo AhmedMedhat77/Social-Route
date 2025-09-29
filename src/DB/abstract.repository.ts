@@ -60,4 +60,7 @@ export abstract class AbstractRepository<T> {
   async deleteMany(filter: FilterQuery<T>, options?: DeleteManyModel<T>) {
     return this.model.deleteMany(filter, options);
   }
+  async deleteOne(filter: FilterQuery<T>) {
+    return this.model.deleteOne(filter);
+  }
 }

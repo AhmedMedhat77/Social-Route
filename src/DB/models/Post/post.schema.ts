@@ -1,25 +1,7 @@
 import { Schema } from "mongoose";
-import { IAttachment, IPost } from "../../../utils";
-import { reactionSchema } from "../common";
-
-const attachmentSchema = new Schema<IAttachment>(
-  {
-    id: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-    id: false,
-  }
-);
+import { IPost } from "../../../utils";
+import { attachmentSchema, reactionSchema } from "../common";
+import { commentModel } from "../comment";
 
 export const PostSchema = new Schema<IPost>(
   {
@@ -46,3 +28,25 @@ export const PostSchema = new Schema<IPost>(
     id: false,
   }
 );
+
+/*
+Virtuals are used to add virtual fields to the schema.
+*/
+
+/*
+Virtual field for comments
+*/
+
+PostSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "postId",
+});
+
+PostSchema.pre("deleteOne", { document: false, query: true }, async function (next) {
+  // delete all comments
+  const filter = typeof this.getFilter() === "function" ? this.getFilter() : this.getFilter();
+  // get all comments
+  await commentModel.deleteMany({ postId: filter._id });
+  next();
+});

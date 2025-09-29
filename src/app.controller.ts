@@ -5,7 +5,7 @@ import cors from "cors";
 import { connectDB } from "./DB";
 
 // Routes
-import { AuthRouter, PostRouter } from "./modules";
+import { AuthRouter, CommentRouter, PostRouter } from "./modules";
 // Utils
 import { globalErrorHandler } from "./utils";
 
@@ -18,6 +18,7 @@ const bootstrap = async (app: Express) => {
 
   // Routes
   app.use("/auth", AuthRouter);
+  app.use("/comment", CommentRouter);
   app.use("/post", PostRouter);
 
   // Dummy Route for not found routes

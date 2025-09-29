@@ -14,7 +14,7 @@ export const postValidation = createValidationSchema({
 
 export const postReactionValidation = createValidationSchema({
   id: z.string(),
-  reaction: z.enum(REACTION_ENUM),
+  reaction: z.enum(REACTION_ENUM).optional().nullable(),
 });
 
 export const postIdValidation = createValidationSchema({
