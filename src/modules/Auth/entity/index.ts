@@ -27,5 +27,7 @@ export class User {
 
   public googleId!: string;
 
-  public oldPassword?: string;
+  public twoFactorEnabled!: boolean;
+  public twoFactorSecret!: string;
+  public twoFactorExpiry!: Date;
 }

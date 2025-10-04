@@ -1,7 +1,13 @@
 import { AGENT_ENUM, ROLE_ENUM } from "../../../utils/common/enum";
 import { hashPassword, hashPhoneNumber } from "../../../utils/hash";
 import { generateOTP } from "../../../utils/OTP";
-import { LoginDTO, RegisterDTO, RegisterWithGoogleDTO, VerifyOTPDTO } from "../auth.dto";
+import {
+  LoginDTO,
+  RegisterDTO,
+  RegisterWithGoogleDTO,
+  VerifyOTPDTO,
+  VerifyTwoFactorDTO,
+} from "../auth.dto";
 import { User } from "../entity";
 
 export class AuthFactoryService {
@@ -56,6 +62,12 @@ export class AuthFactoryService {
     // Optional: Set default values for Google users
     userEntity.otpAttempts = 0;
 
+    return userEntity;
+  };
+  verifyTwoFactorOTP = async (verifyTwoFactorDTO: VerifyTwoFactorDTO) => {
+    const userEntity = new User();
+    userEntity.email = verifyTwoFactorDTO.email;
+    userEntity.twoFactorSecret = verifyTwoFactorDTO.twoFactorSecret;
     return userEntity;
   };
 }

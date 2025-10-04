@@ -32,3 +32,8 @@ export interface RegisterWithGoogleDTO {
   email?: string;
   picture?: string;
 }
+
+export interface VerifyTwoFactorDTO {
+  email: string;
+  twoFactorSecret: string;
+}

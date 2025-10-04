@@ -13,4 +13,5 @@ router.post(
   isValid(validation.RegisterWithGoogleSchema),
   AuthService.registerWithGoogle
 );
+router.post("/verify-two-factor", isValid(validation.verifyTwoFactorSchema), AuthService.verifyTwoFactorOTP);
 export default router;

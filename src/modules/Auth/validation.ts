@@ -23,3 +23,8 @@ export const registerSchema = z
 export const RegisterWithGoogleSchema = z.object({
   googleId: z.string({ error: "Google ID is required" }),
 });
+
+export const verifyTwoFactorSchema = z.object({
+  email: z.string({ error: "Email is required" }),
+  twoFactorSecret: z.string({ error: "Two factor OTP is required" }),
+});
