@@ -20,5 +20,5 @@
 - [x] update password
 - [x] update email
 - [x] 2FA 
-- [ ] update basic info 
-- [ ] send email (tags)
+- [x] send email (tags)
+- [x] update basic info 

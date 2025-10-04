@@ -13,6 +13,11 @@ router.patch(
   UserService.updatePassword
 );
 router.patch("/update-email", isValid(validation.updateEmailSchema), UserService.updateEmail);
-router.patch("/two-factor-auth", isValid(validation.twoFactorAuthSchema), UserService.twoFactorAuth);
+router.patch(
+  "/two-factor-auth",
+  isValid(validation.twoFactorAuthSchema),
+  UserService.twoFactorAuth
+);
 
+router.put("/update-basic-info", UserService.updateBasicInfo);
 export default router;

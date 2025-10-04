@@ -3,7 +3,7 @@ import { UserRepository } from "../../DB";
 import { ObjectId } from "mongoose";
 import { comparePassword, ConflictException, NotFoundException } from "../../utils";
 import { UserFactoryService } from "./factory";
-import { UpdateEmailDTO, UpdatePasswordDTO } from "./user.dto";
+import { UpdateBasicInfoDTO, UpdateEmailDTO, UpdatePasswordDTO } from "./user.dto";
 
 export class UserService {
   private userRepository = new UserRepository();
@@ -105,6 +105,27 @@ export class UserService {
     res.status(201).json({
       success: true,
       message: `Two factor authentication updated successfully ${enable ? "enabled" : "disabled"}`,
+      data: user,
+    });
+  };
+
+  updateBasicInfo = async (req: Request, res: Response) => {
+    const _id = req.user._id;
+    const updateBasicInfoDTO: UpdateBasicInfoDTO = req.body;
+
+    let dataToUpdate: UpdateBasicInfoDTO = {};
+
+    Object.entries(updateBasicInfoDTO).forEach(([key, value]) => {
+      if (value) {
+        dataToUpdate[key as keyof UpdateBasicInfoDTO] = value;
+      }
+    });
+
+    const user = await this.userRepository.updateOne({ _id }, dataToUpdate);
+    
+    res.status(201).json({
+      success: true,
+      message: "Basic info updated successfully",
       data: user,
     });
   };

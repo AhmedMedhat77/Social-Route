@@ -30,3 +30,12 @@ export interface UpdatePasswordDTO {
 export interface UpdateEmailDTO {
   email: string;
 }
+
+export interface UpdateBasicInfoDTO {
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
+  dob?: Date;
+  gender?: GENDER_ENUM;
+  fullName?: string;
+}
