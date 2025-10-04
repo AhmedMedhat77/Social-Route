@@ -89,11 +89,14 @@ export class UserService {
 
   twoFactorAuth = async (req: Request, res: Response) => {
     const _id = req.user._id;
-    
+
     const enable = req.body.enable;
 
-    // find one and update two factor enabled
-    const user = await this.userRepository.updateOne({ _id }, { twoFactorEnabled: enable });
+    // find one and update two factor enabled & reset two factor secret and expiry
+    const user = await this.userRepository.updateOne(
+      { _id },
+      { twoFactorEnabled: enable, twoFactorSecret: undefined, twoFactorExpiry: undefined }
+    );
 
     if (!user) {
       throw new NotFoundException("User not found");
