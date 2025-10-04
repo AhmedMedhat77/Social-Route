@@ -26,4 +26,6 @@ export class User {
   public otpAttempts!: number;
 
   public googleId!: string;
+
+  public oldPassword?: string;
 }

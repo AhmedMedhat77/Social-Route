@@ -17,3 +17,8 @@
 - [x] add comment - get comments - get comment and it's replies  - delete comment and it's replies 
 - [x] delete post and it's comments 
 - [x] add reactions
+- [x] update password
+
+- [ ] 2FA 
+- [ ] update basic info 
+- [ ] send email (tags)

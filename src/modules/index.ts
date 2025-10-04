@@ -1,5 +1,6 @@
 import AuthRouter from "./Auth/auth.controller";
 import CommentRouter from "./Comment/comment.controller";
 import PostRouter from "./Post/post.controller";
+import UserRouter from "./User/user.controller";
 
-export { AuthRouter, PostRouter, CommentRouter };
+export { AuthRouter, PostRouter, CommentRouter, UserRouter };

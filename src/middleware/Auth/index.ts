@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { IUser, UnauthorizedException, verifyToken } from "../../utils";
 import { UserRepository } from "../../DB";
 
-interface ITokenUser {
-  _id: string;
-  email: string;
-}
+// interface ITokenUser {
+//   _id: string;
+//   email: string;
+// }
 
 export const AuthMiddleware = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +28,7 @@ export const AuthMiddleware = () => {
       throw new UnauthorizedException("Unauthorized");
     }
 
-    req.user = { _id: _id, email } as unknown as IUser;
+    req.user = { _id: _id, email } as unknown as Partial<IUser>;
 
     next();
   };

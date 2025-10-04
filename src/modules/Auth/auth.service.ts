@@ -1,11 +1,6 @@
 import { Request, Response } from "express";
 import { LoginDTO, RegisterDTO, RegisterWithGoogleDTO, VerifyOTPDTO } from "./auth.dto";
-import {
-  AuthFactoryService,
-  LoginFactoryService,
-  VerifyOTPFactoryService,
-  GoogleAuthFactoryService,
-} from "./factory";
+import { AuthFactoryService } from "./factory";
 import { ConflictException } from "../../utils";
 import { UserRepository } from "../../DB/models";
 import { OAuth2Client } from "google-auth-library";
@@ -14,9 +9,6 @@ import config from "../../config";
 class AuthService {
   private userRepository = new UserRepository();
   private authFactoryService = new AuthFactoryService();
-  private verifyOTPFactoryService = new VerifyOTPFactoryService();
-  private loginFactoryService = new LoginFactoryService();
-  private googleAuthFactoryService = new GoogleAuthFactoryService();
 
   constructor() {}
 
@@ -48,7 +40,7 @@ class AuthService {
     // DTO => Data to Object
     const verifyOTPDTO: VerifyOTPDTO = req.body;
     // 2. prepare data in factory
-    const userData = await this.verifyOTPFactoryService.verifyOTP(verifyOTPDTO);
+    const userData = await this.authFactoryService.verifyOTP(verifyOTPDTO);
     // 3. verify OTP
     const user = await this.userRepository.verifyOTP(userData);
     // 4. return response
@@ -63,7 +55,7 @@ class AuthService {
     // DTO => Data to Object
     const loginDTO: LoginDTO = req.body;
     // 2. prepare data in factory
-    const userData = await this.loginFactoryService.login(loginDTO);
+    const userData = await this.authFactoryService.login(loginDTO);
     // 3. login
     const user = await this.userRepository.login(userData);
     // 4. return response
@@ -86,7 +78,7 @@ class AuthService {
     const { name, email, picture } = ticket.getPayload()!;
 
     //2. prepare data in factory
-    const userData = await this.googleAuthFactoryService.registerWithGoogle({
+    const userData = await this.authFactoryService.registerWithGoogle({
       googleId: registerWithGoogleDTO.googleId,
       name,
       email,

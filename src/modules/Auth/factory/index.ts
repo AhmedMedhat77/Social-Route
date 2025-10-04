@@ -27,9 +27,7 @@ export class AuthFactoryService {
     userEntity.gender = registerDTO.gender;
     return userEntity;
   };
-}
 
-export class VerifyOTPFactoryService {
   verifyOTP = async (verifyOTPDTO: VerifyOTPDTO) => {
     const userEntity = new User();
     userEntity.email = verifyOTPDTO.email;
@@ -37,18 +35,12 @@ export class VerifyOTPFactoryService {
 
     return userEntity;
   };
-}
-
-export class LoginFactoryService {
   login = async (loginDTO: LoginDTO) => {
     const userEntity = new User();
     userEntity.email = loginDTO.email;
     userEntity.password = loginDTO.password;
     return userEntity;
   };
-}
-
-export class GoogleAuthFactoryService {
   registerWithGoogle = async (googleData: RegisterWithGoogleDTO) => {
     const userEntity = new User();
 
