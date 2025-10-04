@@ -3,7 +3,7 @@ import { UserRepository } from "../../DB";
 import { ObjectId } from "mongoose";
 import { comparePassword, ConflictException, NotFoundException } from "../../utils";
 import { UserFactoryService } from "./factory";
-import { UpdatePasswordDTO } from "./user.dto";
+import { UpdateEmailDTO, UpdatePasswordDTO } from "./user.dto";
 
 export class UserService {
   private userRepository = new UserRepository();
@@ -27,9 +27,6 @@ export class UserService {
     });
   };
 
-
-
-  
   updatePassword = async (req: Request, res: Response) => {
     const _id = req.user._id;
     const updatePasswordDTO: UpdatePasswordDTO = req.body;
@@ -62,7 +59,52 @@ export class UserService {
     });
   };
 
+  updateEmail = async (req: Request, res: Response) => {
+    const _id = req.user._id;
+    // 1. get data from body
+    const updateEmailDTO: UpdateEmailDTO = req.body;
+    // 2. prepare data in factory
+    const emailData = await this.userFactoryService.updateEmail(updateEmailDTO);
+    // 3. check if email is already exists for other user
+    const user = await this.userRepository.isExists({
+      email: emailData.email,
+      _id: { $ne: _id },
+    });
 
+    if (user) {
+      throw new ConflictException("Email already exists");
+    }
+    //  4. update email
+    const updatedUser = await this.userRepository.updateOne(
+      { _id },
+      { email: emailData.email, credentialsUpdatedAt: new Date() }
+    );
+    // 5. return response
+    res.status(201).json({
+      success: true,
+      message: "Email updated successfully",
+      data: updatedUser,
+    });
+  };
+
+  twoFactorAuth = async (req: Request, res: Response) => {
+    const _id = req.user._id;
+    
+    const enable = req.body.enable;
+
+    // find one and update two factor enabled
+    const user = await this.userRepository.updateOne({ _id }, { twoFactorEnabled: enable });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `Two factor authentication updated successfully ${enable ? "enabled" : "disabled"}`,
+      data: user,
+    });
+  };
 }
 
 export default new UserService();

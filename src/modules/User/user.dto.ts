@@ -26,3 +26,7 @@ export interface UpdatePasswordDTO {
   oldPassword: string;
   newPassword: string;
 }
+
+export interface UpdateEmailDTO {
+  email: string;
+}

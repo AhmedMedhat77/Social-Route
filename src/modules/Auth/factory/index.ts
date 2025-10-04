@@ -14,7 +14,8 @@ export class AuthFactoryService {
     userEntity.lastName = registerDTO.fullName.split(" ")[1];
     userEntity.avatar = registerDTO.avatar;
     userEntity.email = registerDTO.email!;
-    userEntity.phone = await hashPhoneNumber(registerDTO.phone!);
+    // Only hash phone if it exists
+    userEntity.phone = registerDTO.phone ? await hashPhoneNumber(registerDTO.phone) : "";
     userEntity.password = await hashPassword(registerDTO.password);
     userEntity.userAgent = AGENT_ENUM.local;
     userEntity.role = ROLE_ENUM.USER;

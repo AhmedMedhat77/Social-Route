@@ -27,6 +27,10 @@ export interface IUser extends Document {
   otp?: string;
   otpExpiresAt?: Date;
   otpAttempts: number;
+
+  twoFactorEnabled: boolean;
+  twoFactorSecret: string;
+  twoFactorExpiry: Date;
 }
 
 // REOPEN IUSER Concept

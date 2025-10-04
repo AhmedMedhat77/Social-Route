@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 import { GENDER_ENUM, AGENT_ENUM, ROLE_ENUM } from "../../../utils/common/enum";
-import { IUser } from "../../../utils/common/interfaces/User";
+import { IUser } from "../../../utils";
 
 export const userSchema = new Schema<IUser>(
   {
@@ -71,7 +71,18 @@ export const userSchema = new Schema<IUser>(
       type: Number,
       default: 0,
     },
-
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    twoFactorSecret: {
+      type: String,
+      trim: true,
+    },
+    twoFactorExpiry: {
+      type: Date,
+      default: undefined,
+    },
     role: {
       type: String,
       enum: ROLE_ENUM,
