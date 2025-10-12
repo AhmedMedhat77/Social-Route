@@ -19,5 +19,7 @@ router.patch(
   UserService.twoFactorAuth
 );
 
+router.post("/verify-otp", isValid(validation.verifyOTPSchema), UserService.verifyOTP);
+
 router.put("/update-basic-info", UserService.updateBasicInfo);
 export default router;

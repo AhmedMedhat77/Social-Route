@@ -1,9 +1,16 @@
 import { Request, Response } from "express";
 import { UserRepository } from "../../DB";
 import { ObjectId } from "mongoose";
-import { comparePassword, ConflictException, NotFoundException } from "../../utils";
+import {
+  comparePassword,
+  ConflictException,
+  generateOTP,
+  NotFoundException,
+  sendEmail,
+} from "../../utils";
 import { UserFactoryService } from "./factory";
 import { UpdateBasicInfoDTO, UpdateEmailDTO, UpdatePasswordDTO } from "./user.dto";
+import { VerifyOTPDTO } from "../Auth";
 
 export class UserService {
   private userRepository = new UserRepository();
@@ -74,16 +81,52 @@ export class UserService {
     if (user) {
       throw new ConflictException("Email already exists");
     }
-    //  4. update email
-    const updatedUser = await this.userRepository.updateOne(
-      { _id },
-      { email: emailData.email, credentialsUpdatedAt: new Date() }
-    );
+
+    // 3.1 generate OTP
+    const otp = generateOTP().otp;
+    const otpExpiry = generateOTP({ expiryTime: 5 * 60 * 60 * 1000 }).otpExpiry;
+
+    // 3.2 update OTP and OTP expiry
+    await this.userRepository.updateOne({ _id }, { otp: otp, otpExpiresAt: otpExpiry });
+
+    // 4. send email to user
+    await sendEmail({
+      to: emailData.email,
+      subject: "Please verify your email By OTP",
+      text: `Your OTP is ${otp}`,
+    });
+
     // 5. return response
     res.status(201).json({
       success: true,
-      message: "Email updated successfully",
-      data: updatedUser,
+      message: "OTP sent To Your email Please Verify",
+    });
+  };
+
+  verifyOTP = async (req: Request, res: Response) => {
+    const _id = req.user._id;
+    const verifyOTPDTO: VerifyOTPDTO = req.body;
+
+    // 2. check if OTP is valid
+    const user = await this.userRepository.isExists({ _id, otp: verifyOTPDTO.otp });
+
+    if (!user) {
+      throw new NotFoundException("Invalid OTP");
+    }
+
+    if (user?.otpExpiresAt && user.otpExpiresAt < new Date()) {
+      throw new ConflictException("OTP has expired");
+    }
+
+    // 3. update user
+    await this.userRepository.updateOne(
+      { _id },
+      { otp: undefined, otpExpiresAt: undefined, otpAttempts: 0, email: verifyOTPDTO.email }
+    );
+    // 4. return response
+    res.status(200).json({
+      success: true,
+      message: `updated successfully Your email is ${verifyOTPDTO.email} `,
     });
   };
 
@@ -122,7 +165,7 @@ export class UserService {
     });
 
     const user = await this.userRepository.updateOne({ _id }, dataToUpdate);
-    
+
     res.status(201).json({
       success: true,
       message: "Basic info updated successfully",

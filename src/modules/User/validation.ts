@@ -13,3 +13,8 @@ export const updateEmailSchema = createValidationSchema({
 export const twoFactorAuthSchema = createValidationSchema({
   enable: z.enum(["true", "false"]),
 });
+
+export const verifyOTPSchema = createValidationSchema({
+  email: z.email({ error: "Invalid email" }),
+  otp: z.string().length(5),
+});
