@@ -83,6 +83,7 @@ export const userSchema = new Schema<IUser>(
       type: Date,
       default: undefined,
     },
+
     role: {
       type: String,
       enum: ROLE_ENUM,

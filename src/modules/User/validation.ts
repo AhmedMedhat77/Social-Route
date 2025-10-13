@@ -18,3 +18,7 @@ export const verifyOTPSchema = createValidationSchema({
   email: z.email({ error: "Invalid email" }),
   otp: z.string().length(5),
 });
+
+export const blockUserSchema = createValidationSchema({
+  userId: z.string(),
+});

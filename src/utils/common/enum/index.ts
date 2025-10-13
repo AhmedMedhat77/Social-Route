@@ -25,3 +25,9 @@ export enum REACTION_ENUM {
   SAD = "6",
   ANGRY = "7",
 }
+
+export enum FRIENDS_STATUS_ENUM {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+  REJECTED = "rejected",
+}

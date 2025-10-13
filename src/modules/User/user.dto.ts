@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { GENDER_ENUM, IUser, ROLE_ENUM } from "../../utils";
 
 export interface IUserDTO extends Partial<IUser> {
@@ -39,3 +40,4 @@ export interface UpdateBasicInfoDTO {
   gender?: GENDER_ENUM;
   fullName?: string;
 }
+

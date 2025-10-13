@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserRepository } from "../../DB";
-import { ObjectId } from "mongoose";
+
 import {
   comparePassword,
   ConflictException,
@@ -15,6 +15,7 @@ import { VerifyOTPDTO } from "../Auth";
 export class UserService {
   private userRepository = new UserRepository();
   private userFactoryService = new UserFactoryService();
+
   constructor() {}
 
   getUser = async (req: Request, res: Response) => {
