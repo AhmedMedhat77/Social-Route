@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 export const sendEmail = async (mailOptions: MailOptions) => {
   try {
     const OPTIONS: MailOptions = {
-      from: mailOptions.from || `'Ecommerce App' ${config.emailUser}`,
+      from: mailOptions.from || `'Social Media App' ${config.emailUser}`,
       to: mailOptions.to,
       subject: mailOptions.subject,
       text: mailOptions.text,
