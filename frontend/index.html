@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat App</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script>
+    <script
+      src="https://cdn.socket.io/4.8.1/socket.io.min.js"
+      integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <span class="text-white font-bold text-sm">C</span>
+              </div>
+              <h1 class="text-xl font-bold text-gray-900">Chat App</h1>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span class="text-sm text-gray-600">Online</span>
+            </div>
+            <div class="text-sm text-gray-700">
+              Welcome, <span id="username" class="font-semibold text-blue-600"></span>
+            </div>
+            <button
+              class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+              id="logout"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex h-screen">
+      <!-- Active Users Sidebar -->
+      <div class="w-80 bg-white shadow-lg border-r border-gray-200">
+        <div class="p-4 border-b border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+            Active Users
+            <span id="userCount" class="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">0</span>
+          </h2>
+        </div>
+        <div class="p-4">
+          <div class="mb-4">
+            <div class="flex space-x-2">
+              <button id="publicChatBtn" class="flex-1 bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium">
+                Public Chat
+              </button>
+              <button id="privateChatBtn" class="flex-1 bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium">
+                Private Chat
+              </button>
+            </div>
+          </div>
+          <ul id="usersList" class="space-y-2">
+            <!-- Users will be populated here -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="flex-1 flex flex-col">
+        <!-- Messages Area -->
+        <div class="flex-1 bg-gray-50 p-4 overflow-y-auto">
+          <div id="messages" class="space-y-4">
+            <!-- Messages will be populated here -->
+            <div class="text-center text-gray-500 text-sm">
+              Start a conversation...
+            </div>
+          </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="bg-white border-t border-gray-200 p-4">
+          <!-- Chat Mode Indicator -->
+          <div id="chatModeIndicator" class="mb-2 text-sm text-gray-600">
+            <span id="currentMode">Public Chat</span>
+            <span id="recipientInfo" class="hidden"> - To: <span id="recipientName"></span></span>
+          </div>
+          
+          <!-- Recipient Selector (for private chat) -->
+          <div id="recipientSelector" class="mb-2 hidden">
+            <select id="recipientSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <option value="">Select a user to message...</option>
+            </select>
+          </div>
+          
+          <div class="flex space-x-4">
+            <input 
+              type="text" 
+              id="message" 
+              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" 
+              placeholder="Type your message..." 
+            />
+            <button 
+              class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+              id="send"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+              <span>Send</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="scripts/script.js"></script>
+  </body>
+</html>

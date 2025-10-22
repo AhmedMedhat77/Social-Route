@@ -8,6 +8,7 @@ import { connectDB } from "./DB";
 import { AuthRouter, CommentRouter, FriendRouter, PostRouter, UserRouter } from "./modules";
 // Utils
 import { globalErrorHandler } from "./utils";
+import { initializeSocket } from "./socket-io";
 
 const bootstrap = async (app: Express) => {
   connectDB();
@@ -34,8 +35,10 @@ const bootstrap = async (app: Express) => {
   app.use(globalErrorHandler);
 
   // Server
-  app.listen(config.port, () => {
+  const server = app.listen(config.port, () => {
     console.log(`Server is running on port ${config.port}`);
   });
+
+  initializeSocket(server);
 };
 export default bootstrap;
