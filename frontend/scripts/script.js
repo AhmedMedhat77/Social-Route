@@ -158,12 +158,49 @@ function updateRecipientSelector(users) {
 }
 
 // Select user for private chat
-function selectUserForPrivateChat(user) {
+async function selectUserForPrivateChat(user) {
   selectedRecipient = user;
   switchToPrivateMode();
   const displayName = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown User';
   recipientName.textContent = displayName;
   recipientInfo.classList.remove("hidden");
+  
+  // Load chat history
+  await loadChatHistory(user._id);
+}
+
+// Load chat history from server
+async function loadChatHistory(recipientId) {
+  try {
+    const token = window.localStorage.getItem("token");
+    const response = await fetch(`${BASE_URL}/message/${recipientId}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.data) {
+        // Clear current messages
+        messages.innerHTML = "";
+        
+        // Display chat history
+        data.data.forEach((message) => {
+          const isFromMe = message.senderId === currentUser._id;
+          const messageType = isFromMe ? "private-sent" : "private-received";
+          const senderName = isFromMe ? "You" : selectedRecipient.fullName;
+          addMessage(`${senderName}: ${message.content}`, messageType);
+        });
+      }
+    } else {
+      console.error("Failed to load chat history:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error loading chat history:", error);
+  }
 }
 
 // Switch to private chat mode
@@ -264,7 +301,7 @@ sendButton.onclick = sendMessage;
 publicChatBtn.onclick = switchToPublicMode;
 privateChatBtn.onclick = switchToPrivateMode;
 
-recipientSelect.onchange = (e) => {
+recipientSelect.onchange = async (e) => {
   const recipientId = e.target.value;
   if (recipientId) {
     // Find the user from the current connected users list
@@ -276,7 +313,7 @@ recipientSelect.onchange = (e) => {
     if (userElement) {
       const displayName = userElement.querySelector("p").textContent;
       const user = { _id: recipientId, fullName: displayName };
-      selectUserForPrivateChat(user);
+      await selectUserForPrivateChat(user);
     }
   }
 };

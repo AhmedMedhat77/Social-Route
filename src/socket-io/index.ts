@@ -2,10 +2,11 @@ import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
 import { SocketIOAuthMiddleware } from "./middleware";
 import { IUser } from "../utils";
+import { MessageModel } from "../DB";
 
 // Track socketId -> userId and aggregate users by userId to avoid duplicates
 const socketIdToUserId = new Map<string, string>();
-const userIdToUserInfo = new Map<string, (Partial<IUser> & { connectionCount: number })>();
+const userIdToUserInfo = new Map<string, Partial<IUser> & { connectionCount: number }>();
 
 export const initializeSocket = (server: HttpServer) => {
   const io = new Server(server, {
@@ -25,7 +26,10 @@ export const initializeSocket = (server: HttpServer) => {
 
       const existing = userIdToUserInfo.get(userId);
       if (existing) {
-        userIdToUserInfo.set(userId, { ...existing, connectionCount: existing.connectionCount + 1 });
+        userIdToUserInfo.set(userId, {
+          ...existing,
+          connectionCount: existing.connectionCount + 1,
+        });
       } else {
         userIdToUserInfo.set(userId, {
           _id: userId,
@@ -60,7 +64,7 @@ export const initializeSocket = (server: HttpServer) => {
 
     // Chat message handlers
     socket.on("public_message", (data) => {
-      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || '');
+      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || "");
       if (user) {
         io.emit("public_message", {
           message: data.message,
@@ -70,13 +74,21 @@ export const initializeSocket = (server: HttpServer) => {
       }
     });
 
-    socket.on("private_message", (data) => {
-      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || '');
+    socket.on("private_message", async (data) => {
+      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || "");
       if (user) {
         // Send to specific recipient
-        const recipientSocket = Array.from(socketIdToUserId.entries())
-          .find(([_, userId]) => userId === data.recipientId)?.[0];
-        
+        const recipientSocket = Array.from(socketIdToUserId.entries()).find(
+          ([_, userId]) => userId === data.recipientId
+        )?.[0];
+
+        // Save message to database
+        await MessageModel.create({
+          senderId: user._id,
+          receiverId: data.recipientId,
+          content: data.message,
+        });
+
         if (recipientSocket) {
           io.to(recipientSocket).emit("private_message", {
             message: data.message,
@@ -85,7 +97,7 @@ export const initializeSocket = (server: HttpServer) => {
             recipientId: data.recipientId,
           });
         }
-        
+
         // Also send back to sender for confirmation
         socket.emit("private_message", {
           message: data.message,
@@ -98,7 +110,7 @@ export const initializeSocket = (server: HttpServer) => {
 
     // Typing indicator
     socket.on("typing", (data) => {
-      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || '');
+      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || "");
       if (user) {
         socket.broadcast.emit("user_typing", {
           userId: user._id,

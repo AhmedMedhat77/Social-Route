@@ -1,5 +1,4 @@
-import { JwtPayload } from "jsonwebtoken";
-import { verifyToken } from "../../utils";
+import { NotFoundException, verifyToken } from "../../utils";
 import { Server } from "socket.io";
 import User from "../../DB/models/User/user.model";
 
@@ -27,12 +26,15 @@ export const SocketIOAuthMiddleware = (io: Server) => {
         "firstName lastName email phone avatar gender fullname"
       );
 
+      if (!user) {
+        throw new NotFoundException("User not found");
+      }
       socket.data.user = user;
       return next();
     } catch (error) {
       console.log("Token verification failed:", (error as Error).message);
       socket.data.user = null;
-      return next();
+      return next(new Error((error as Error).message));
     }
   });
 };
