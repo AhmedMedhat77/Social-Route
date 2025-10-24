@@ -2,7 +2,9 @@ import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
 import { SocketIOAuthMiddleware } from "./middleware";
 import { IUser } from "../utils";
-import { MessageModel } from "../DB";
+import { useSendPrivateMessage } from "./chat/useSendMessage";
+import { useTyping } from "./chat/useTyping";
+import { usePublicMessage } from "./chat/usePulicMsessage";
 
 // Track socketId -> userId and aggregate users by userId to avoid duplicates
 const socketIdToUserId = new Map<string, string>();
@@ -63,62 +65,13 @@ export const initializeSocket = (server: HttpServer) => {
     });
 
     // Chat message handlers
-    socket.on("public_message", (data) => {
-      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || "");
-      if (user) {
-        io.emit("public_message", {
-          message: data.message,
-          fullName: user.fullName,
-          senderId: user._id,
-        });
-      }
-    });
+    usePublicMessage(socket, socketIdToUserId, userIdToUserInfo);
 
-    socket.on("private_message", async (data) => {
-      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || "");
-      if (user) {
-        // Send to specific recipient
-        const recipientSocket = Array.from(socketIdToUserId.entries()).find(
-          ([_, userId]) => userId === data.recipientId
-        )?.[0];
-
-        // Save message to database
-        await MessageModel.create({
-          senderId: user._id,
-          receiverId: data.recipientId,
-          content: data.message,
-        });
-
-        if (recipientSocket) {
-          io.to(recipientSocket).emit("private_message", {
-            message: data.message,
-            fullName: user.fullName,
-            senderId: user._id,
-            recipientId: data.recipientId,
-          });
-        }
-
-        // Also send back to sender for confirmation
-        socket.emit("private_message", {
-          message: data.message,
-          fullName: user.fullName,
-          senderId: user._id,
-          recipientId: data.recipientId,
-        });
-      }
-    });
+    // Private message
+    useSendPrivateMessage(socket, socketIdToUserId, userIdToUserInfo);
 
     // Typing indicator
-    socket.on("typing", (data) => {
-      const user = userIdToUserInfo.get(socketIdToUserId.get(socket.id) || "");
-      if (user) {
-        socket.broadcast.emit("user_typing", {
-          userId: user._id,
-          fullName: user.fullName,
-          isTyping: data.isTyping,
-        });
-      }
-    });
+    useTyping(socket, socketIdToUserId, userIdToUserInfo);
 
     // Cleanup on this socket disconnect
     socket.on("disconnect", () => {

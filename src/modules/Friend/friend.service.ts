@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { FriendRepository } from "../../DB/models/Friend/friend.repository";
 import { ConflictException, FRIENDS_STATUS_ENUM, NotFoundException } from "../../utils";
 import { AddFriendDTO, BlockUserDTO } from "./friend.dto";
+import { Types } from "mongoose";
 
 class friendService {
   private friendRepository = new FriendRepository();
@@ -46,7 +47,7 @@ class friendService {
   addFriend = async (req: Request, res: Response) => {
     const _id = req.user._id;
     const addFriendDTO: AddFriendDTO = req.body;
-
+    console.log(addFriendDTO);
     // check if user is already a friend
     const user = await this.friendRepository.isExists({
       userId: _id,
@@ -59,15 +60,26 @@ class friendService {
       throw new ConflictException("User already a friend");
     }
 
-    // add friend
-    await this.friendRepository.updateOne(
-      { userId: _id, friendId: addFriendDTO.friendId },
-      { status: FRIENDS_STATUS_ENUM.ACCEPTED }
+    // create reverse relationship
+    const reverseFriend = await this.friendRepository.findOneAndUpdate(
+      {
+        userId: _id,
+        friendId: addFriendDTO.friendId,
+        status: FRIENDS_STATUS_ENUM.ACCEPTED,
+      },
+      {
+        userId: _id,
+        friendId: addFriendDTO.friendId,
+        status: FRIENDS_STATUS_ENUM.ACCEPTED,
+      },
+      { upsert: true }
     );
+
     // return response
     res.status(201).json({
       success: true,
       message: "Friend added successfully",
+      data: reverseFriend,
     });
   };
   removeFriend = async (req: Request, res: Response) => {
@@ -192,11 +204,26 @@ class friendService {
 
   getFriends = async (req: Request, res: Response) => {
     const _id = req.user._id;
-    const friends = await this.friendRepository.findAll({
-      userId: _id,
-      status: FRIENDS_STATUS_ENUM.ACCEPTED,
-      isBlocked: false,
-    });
+
+    // Get all friends where current user is the userId and status is accepted
+    const friends = await this.friendRepository.findAll(
+      {
+        userId: _id,
+        status: FRIENDS_STATUS_ENUM.ACCEPTED,
+        isBlocked: false,
+      },
+      {},
+      {
+        populate: [
+          {
+            path: "friendId",
+            select: "_id fullName avatar firstName lastName email",
+          },
+        ],
+        sort: { createdAt: -1 }
+      }
+    );
+
     res.status(200).json({
       success: true,
       message: "Friends fetched successfully",

@@ -1,21 +1,33 @@
 import express, { Express } from "express";
 import config from "./config";
 import cors from "cors";
-
+import { createHandler } from "graphql-http/lib/use/express";
 import { connectDB } from "./DB";
+import { schema } from "./graphql";
 
 // Routes
-import { AuthRouter, CommentRouter, FriendRouter, MessageRouter, PostRouter, UserRouter } from "./modules";
+import {
+  AuthRouter,
+  CommentRouter,
+  FriendRouter,
+  MessageRouter,
+  PostRouter,
+  UserRouter,
+} from "./modules";
 // Utils
 import { globalErrorHandler } from "./utils";
 import { initializeSocket } from "./socket-io";
 
 const bootstrap = async (app: Express) => {
+  // GraphQl Handler
+  const handler = createHandler({ schema });
   connectDB();
   // Middleware
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cors());
+
+  app.use("/graphql", handler);
 
   // Routes
   app.use("/auth", AuthRouter);

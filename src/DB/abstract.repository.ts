@@ -50,6 +50,13 @@ export abstract class AbstractRepository<T> {
   ) {
     return this.model.updateMany(filter, update, options);
   }
+  async findOneAndUpdate(
+    filter: RootFilterQuery<T>,
+    update: UpdateQuery<T>,
+    options?: QueryOptions<T>
+  ) {
+    return this.model.findOneAndUpdate(filter, update, options);
+  }
 
   async deleteById(id: ObjectId, options?: QueryOptions<T>) {
     return this.model.findByIdAndDelete(id, options);

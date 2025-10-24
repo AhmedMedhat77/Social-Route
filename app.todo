@@ -22,3 +22,6 @@
 - [x] 2FA 
 - [x] send email (tags)
 - [x] update basic info 
+- [x] add socket 
+- [x] add message model 
+- [x] send message and receive message
