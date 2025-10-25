@@ -21,13 +21,12 @@ import { initializeSocket } from "./socket-io";
 const bootstrap = async (app: Express) => {
   // GraphQl Handler
   const handler = createHandler({ schema });
+  // Connect to DB
   connectDB();
   // Middleware
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cors());
-
-  app.use("/graphql", handler);
 
   // Routes
   app.use("/auth", AuthRouter);
@@ -36,6 +35,10 @@ const bootstrap = async (app: Express) => {
   app.use("/user", UserRouter);
   app.use("/friend", FriendRouter);
   app.use("/message", MessageRouter);
+
+  // GraphQl Route
+  app.use("/graphql", handler);
+
   // Dummy Route for not found routes
   app.use("/{*dummy}", (req, res) => {
     res.status(404).json({
